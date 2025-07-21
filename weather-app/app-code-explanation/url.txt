@@ -1,0 +1,7 @@
+// Fetching weather info using openweathermap.org api:
+
+// const apiKey = '308111ac0516c2961282b1ce6d2141e9';
+// const city = 'Delhi'; // or any city you want
+// const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+const url = `https://api.openweathermap.org/data/2.5/weather?q=Delhi&appid=308111ac0516c2961282b1ce6d2141e9&units=metric`; // <- combined in one

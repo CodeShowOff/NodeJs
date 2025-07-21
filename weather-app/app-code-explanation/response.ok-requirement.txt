@@ -1,0 +1,8 @@
+if (!response.ok) { 
+    throw new Error(`HTTP error! Status: ${response.status}`);
+}
+
+It is used to check the success of a fetch() response.
+This helps you catch bad responses even when fetch() itself doesn't 
+reject the promise (since fetch() only rejects on network failure, not HTTP errors).
+           

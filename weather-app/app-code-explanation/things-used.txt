@@ -1,0 +1,7 @@
+API of openweathermap.org to retrive the weather data.
+
+
+Geocoding service:
+Geocoding is a process of taking an address like Delhi,India and converting that into a latitude and longitude coordinate pair.
+We'll use this coordinates to pass it to openweathermap.org api to get the weather information for that location.
+Requires money to get api key. So, leave it.
