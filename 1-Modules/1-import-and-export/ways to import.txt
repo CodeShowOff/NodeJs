@@ -1,0 +1,8 @@
+// To import core modules:
+import fs from 'fs';
+
+// To import our modules (local files):
+import myModule from './myModule.js';
+
+// To import dependencies or npm modules:
+import 'moduleName';

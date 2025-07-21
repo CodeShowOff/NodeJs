@@ -1,0 +1,18 @@
+C:\Users\shukr\Desktop\Node JS\Codes\2-Command-Line-and-File-System\notes-app>node notes-app-mine.js add -t "Shubham" -b "My name is Shubham"
+[ { title: 'Shubham', body: 'My name is Shubham' } ]
+Notes added successfully
+
+C:\Users\shukr\Desktop\Node JS\Codes\2-Command-Line-and-File-System\notes-app>node notes-app-mine.js add -t "Shubham" -b "My name is Shubham"
+❌ Note title already exists!
+Notes added successfully
+
+C:\Users\shukr\Desktop\Node JS\Codes\2-Command-Line-and-File-System\notes-app>node notes-app-mine.js add -t "Himanshu" -b "My name is Himanshu"
+[
+  { title: 'Shubham', body: 'My name is Shubham' },
+  { title: 'Himanshu', body: 'My name is Himanshu' }
+]
+Notes added successfully
+
+C:\Users\shukr\Desktop\Node JS\Codes\2-Command-Line-and-File-System\notes-app>node notes-app-mine.js list                                      
+1. Shubham: My name is Shubham
+2. Himanshu: My name is Himanshu
