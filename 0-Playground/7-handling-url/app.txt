@@ -1,0 +1,15 @@
+url: 
+    https://www.shubham.com/about?id=5&notes=true
+
+    https:// -> Hyper Text Transfer Protocol Secure
+                (Uses SSL Certificate. More secure than http.) 
+
+    shubham.com -> is a Domain - User Friendly Name of IP Address of my server.
+
+    www. -> is a sub-domain
+
+    /about -> path
+
+    ?id=5&notes=true -> query paremeters
+        id = 5
+        notes = true
