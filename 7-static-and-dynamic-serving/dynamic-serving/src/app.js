@@ -32,7 +32,7 @@ app.use(express.static(publicDirPath));
 
 // Routes
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Home Page', name: 'John Doe' });
+    res.render('index', { title: 'Home Page', name: 'Weather App' });
 });
 
 app.get('/about', (req, res) => {
