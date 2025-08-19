@@ -1,18 +1,15 @@
 {
-  "name": "dynamic-serving",
+  "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^5.1.0",
-    "path": "^0.12.7",
-    "url": "^0.11.4"
+    "commander": "^14.0.0"
   }
 }

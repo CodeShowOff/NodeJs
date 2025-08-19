@@ -1,15 +1,8 @@
-// in app-2.js we learned to serve static web pages.
-// now we'll learn about dynamic web page.
-
-// use templete-engine to render dynamic web pages using express:
-// templete-engine: ejs 
-// ejs will allow us to: 1. render dynamic documents as opposed to static ones.
-//                       2. easily create codes that we can reuse across pages.
-
-
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+
+import getWeather from './temp-backend/app.js'; 
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -45,45 +38,36 @@ app.get('/about', (req, res) => {
 app.get('/help', (req, res) => {
     res.render('help', {
         title: 'Help Page',
-        name: "John Doe"
+        name: "John Doe" 
     });
 })
 
 
-app.get('/products', (req, res) => {
-    if(!req.query.search){
-        return res.send({
-            error: 'You must provide a search term.'
-        })
+app.get('/weather', async (req, res) => {
+    if(!req.query.address) {
+        return res.send('You must provide an address!')
     }
 
-    res.send({
-        search: req.query.search,
-        products: [] 
-    })
+    const weatherData = await getWeather(req.query.address);
+    res.send(weatherData);
 })
 
 
 app.get('/help/*otherHelp', (req, res) => {
-    res.render('404page', { 
+    res.render('404page', {
         title: '404',
         name: 'John Doe',
         errorMessage: 'Help article not found.'
     });
 })
 
-app.get('/*others', (req, res) => { // Use a named wildcard
+app.get('/*others', (req, res) => { 
     res.render('404page', {
         title: '404',
         name: 'John Doe',
         errorMessage: 'Page not found.'
     });
 })
-
-// app.use((req, res) => {
-//     res.status(404).send('My 404 page');
-// });
-
 
 
 const PORT = process.env.PORT || 3000;
