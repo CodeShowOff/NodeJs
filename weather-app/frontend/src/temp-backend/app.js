@@ -14,6 +14,6 @@ export default async function getWeather(address){
             condition: data.weather[0].description
         };
     } catch (err) {
-        return { error: 'Error fetching weather data: ' + err.message };
+        return { error: err.message };
     }
 }
