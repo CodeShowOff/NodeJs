@@ -2,7 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
-import getWeather from './temp-backend/app.js'; 
+import getWeather from './utils/weather-fetch.js'; 
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,14 +31,14 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
     res.render('about', {
         title: 'About Page',
-        name: "John Doe"
+        name: "Shubham"
     });
 })
 
 app.get('/help', (req, res) => {
     res.render('help', {
         title: 'Help Page',
-        name: "John Doe" 
+        name: "Shubham" 
     });
 })
 
@@ -58,7 +58,7 @@ app.get('/weather', async (req, res) => {
 app.get('/help/*otherHelp', (req, res) => {
     res.render('404page', {
         title: '404',
-        name: 'John Doe',
+        name: 'Shubham',
         errorMessage: 'Help article not found.'
     });
 })
@@ -66,7 +66,7 @@ app.get('/help/*otherHelp', (req, res) => {
 app.get('/*others', (req, res) => { 
     res.render('404page', {
         title: '404',
-        name: 'John Doe',
+        name: 'Shubham',
         errorMessage: 'Page not found.'
     });
 })
