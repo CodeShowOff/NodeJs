@@ -1,6 +1,6 @@
 // CRUD Operations:
 
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
@@ -15,6 +15,10 @@ async function run() {
         console.log("Connected!");
 
         const db = client.db(databaseName);
+
+
+
+        // Create Commands:
 
         // Insert one document:
         // const result = await db.collection('users').insertOne({
@@ -45,23 +49,20 @@ async function run() {
 
 
         // Now, Insert into another collection 'tasks':
-        const result = await db.collection('tasks').insertMany([
-            {
-                description: 'Clean the house',
-                completed: true
-            }, {
-                description: 'Renew inspection',
-                completed: false
-            }, {
-                description: 'Declutter things',
-                completed: false
-            }
-        ])
+        // const result = await db.collection('tasks').insertMany([
+        //     {
+        //         description: 'Clean the house',
+        //         completed: true
+        //     }, {
+        //         description: 'Renew inspection',
+        //         completed: false
+        //     }, {
+        //         description: 'Declutter things',
+        //         completed: false
+        //     }
+        // ])
 
-        console.log('Inserted logs:', result.insertedIds);
-
-
-
+        // console.log('Inserted logs:', result.insertedIds);
 
     } catch (err) {
         console.error("Connection failed:", err);
