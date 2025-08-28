@@ -5,7 +5,7 @@ import Task from './models/task.js';
 
 const app = express();
 
-
+ 
 app.use(express.json()); // it will automatically parse incoming json to an object
 
 // Create user
@@ -15,7 +15,7 @@ app.post('/users', async (req, res) => {
         const result = await user.save();
         res.status(201).send(result); // 201 = Created
     } catch (err) {
-        res.status(400).send({ error: err.message });
+        res.status(400).send({ error: err.message }); 
     }
 });
 
@@ -30,12 +30,28 @@ app.get('/users', async (req, res) => {
 });
 
 
+// Find users by Id:
+app.get('/users/:id', async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const user = await User.findById(_id);
+
+        if(!user) 
+            return res.status(404).send({erroe: 'User not found!'});
+
+        res.send(user);
+    } catch (error) {
+        res.status(500).send({error: 'server error'});
+    }
+});
+
+
 app.post('/tasks', async (req, res) => {
     try {
         const task = new Task(req.body);
         const result = await task.save();
         res.status(201).send(result);        
-    } catch (error) {
+    } catch (err) {
         res.status(400).send({ error: err.message });
     }
 });
@@ -43,8 +59,8 @@ app.post('/tasks', async (req, res) => {
 
 app.get('/tasks', async (req, res) => {
     try {
-        const task = await Task.find();
-        res.send(task);
+        const tasks = await Task.find();
+        res.send(tasks);
     } catch (err) {
         res.status(500).send({ error: 'Server error' });
     }
