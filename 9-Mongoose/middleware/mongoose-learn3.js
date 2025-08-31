@@ -1,3 +1,5 @@
+// middleware example: we're using user model of tasks app for example:
+
 import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
@@ -23,7 +25,6 @@ const userSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            unique: true,
             required: true,
             lowercase: true,
             trim: true,
@@ -47,29 +48,12 @@ const userSchema = new mongoose.Schema(
 );
 
 
-userSchema.statics.findByCredentials = async (email, password) => {
-    const user = await User.findOne({ email: email });
-
-    if(!user)
-        throw new Error('Unable to login');
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if(!isMatch)
-        throw new Error('Unable to login');
-
-    return user;
-}
-
-
-
 // middleware - its a way to customize mongoose model:
-// Hash the plain text password before saving: 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function(next) {
 
     // 'this' will holding user reference
 
-    if (this.isModified('password')) {
+    if(this.isModified('password')){
         this.password = await bcrypt.hash(this.password, 8);
     }
 

@@ -15,6 +15,17 @@ router.post('/users', async (req, res) => {
     }
 });
 
+
+router.post('/users/login', async (req, res) => {
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password); // <- custom
+        res.send(user);
+    } catch (err) {
+        res.status(400).send({ error: err.message });
+    }
+})
+
+
 // Read users
 router.get('/users', async (req, res) => {
     try {
@@ -52,7 +63,19 @@ router.patch('/users/:id', async (req, res) => {
 
     try {
         const _id = req.params.id;
-        const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true });
+
+        // before using middleware in mongoose:
+        // const user = await User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true });
+
+        // after using middleware in mongoose:
+        // we have to do this way because we have applied middleware on 'save' i.e. to do something before saving a user.
+        // as findByIdAndUpdate() bypasses mongoose, it performs a direct operation on database thats why we even have to set a special option for running a validators as "runValidators: true"
+        // refer to "9-Mongoose/notes/note-1.md"
+        // So now we'll update using more traditional mongoose way so that the middleware runs correctly:
+
+        const user = await User.findById(_id);
+        updates.forEach( (update) => user[update] = req.body[update]);
+        await user.save();        
 
         if (!user)
             return res.status(404).send({ error: 'User not found!' });
