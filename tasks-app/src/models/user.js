@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const userSchema = new mongoose.Schema(
     {
@@ -42,11 +43,30 @@ const userSchema = new mongoose.Schema(
             validate(value) {
                 if (value.toLowerCase().includes('password')) throw new Error('Use a strong password!');
             }
-        }
+        },
+        tokens: [{
+            token: {
+                type: String,
+                required: true
+            }
+        }]
     },
 );
 
 
+// this method is accessible on the instances, called instance methods:
+userSchema.methods.generateAuthToken = async function(){
+    const user = this;
+
+    const token = jwt.sign({ _id: user._id.toString() }, 'tasks-app-user@CodeShowOff')
+    user.tokens = user.tokens.concat({ token: token });
+    await user.save();
+
+    return token;
+}
+
+
+// statics methods are accessible on the models, called model methods:
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email: email });
 

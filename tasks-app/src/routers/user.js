@@ -1,15 +1,16 @@
 import express from 'express';
 import User from '../models/user.js';
-
+import auth from '../middleware/auth.js';
 
 const router = new express.Router();
 
-// Create user
+// Create user (sign-up)
 router.post('/users', async (req, res) => {
     try {
         const user = new User(req.body);
         const result = await user.save();
-        res.status(201).send(result); // 201 = Created
+        const token = await user.generateAuthToken();
+        res.status(201).send({ result, token }); // 201 = Created
     } catch (err) {
         res.status(400).send({ error: err.message });
     }
@@ -19,15 +20,16 @@ router.post('/users', async (req, res) => {
 router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password); // <- custom
-        res.send(user);
+        const token = await user.generateAuthToken();
+        res.send({ user, token });
     } catch (err) {
         res.status(400).send({ error: err.message });
     }
 })
 
-
+/* We are commenting out this route because we dont want anyone to access all users data, it was just for learning purpose i.e. to view all users.
 // Read users
-router.get('/users', async (req, res) => {
+router.get('/users', auth, async (req, res) => {
     try {
         const users = await User.find();
         res.send(users);
@@ -35,10 +37,17 @@ router.get('/users', async (req, res) => {
         res.status(500).send({ error: 'Server error' });
     }
 });
+*/
+
+
+// Get your own profile:
+router.get('/users/me', auth, async (req, res) => {
+    res.send(req.user); // we created this 'req.user' in our auth.js file
+});
 
 
 // Find users by Id:
-router.get('/users/:id', async (req, res) => {
+router.get('/users/:id', auth, async (req, res) => {
     try {
         const _id = req.params.id;
         const user = await User.findById(_id);
@@ -54,7 +63,7 @@ router.get('/users/:id', async (req, res) => {
 
 
 // Update users
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/:id', auth, async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['name', 'age', 'password'];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
@@ -88,7 +97,7 @@ router.patch('/users/:id', async (req, res) => {
 
 
 // Delete users
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/:id', auth, async (req, res) => {
     const _id = req.params.id;
     try {
         const user = await User.findByIdAndDelete(_id);
