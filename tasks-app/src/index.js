@@ -5,6 +5,11 @@ import taskRouter from './routers/task.js'
 
 const app = express();
 
+// Express middleware:
+// Without middleware: new request -> run route handler
+
+// With middleware: new request -> do something -> run route handler
+
 /*
 // express middleware for maintainance mode:
 app.use((req, res, next) => {
@@ -24,10 +29,4 @@ app.use(taskRouter);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
-});   
-
-
-// Express middleware:
-// Without middleware: new request -> run route handler
-
-// With middleware: new request -> do something -> run route handler
+});

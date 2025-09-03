@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Task from './task.js';
 
 const userSchema = new mongoose.Schema(
     {
@@ -27,7 +28,7 @@ const userSchema = new mongoose.Schema(
             unique: true,
             required: true,
             lowercase: true,
-            trim: true,
+            trim: true, 
 
             // Using validator package to validate email:
             validate(value) {
@@ -52,6 +53,13 @@ const userSchema = new mongoose.Schema(
         }]
     },
 );
+
+
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
+});
 
 
 userSchema.methods.toJSON = function() {
@@ -106,9 +114,18 @@ userSchema.pre('save', async function (next) {
     }
 
     next(); // now go and run 'save' to save the User;
-})
+});
 
 
-const User = mongoose.model('user', userSchema);
+// Deletes the task when user is removed:
+userSchema.pre('findOneAndDelete', async function(next) {
+  const { _id } = this.getFilter();
+  if (_id) await Task.deleteMany({ owner: _id });
+  next();
+});
+
+
+
+const User = mongoose.model('User', userSchema);
 
 export default User;

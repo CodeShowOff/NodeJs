@@ -165,14 +165,12 @@ router.delete('/users/:id', auth, async (req, res) => {
 // Delete users
 router.delete('/users/me', auth, async (req, res) => {
     try {
-        await req.user.remove();
+        await User.findByIdAndDelete(req.user._id);
         res.send(req.user);
     } catch (err) {
-        res.status(400).send({ error: err.message});
+        res.status(400).send({ error: err.message });
     }
 });
-
-
 
 
 export default router;
