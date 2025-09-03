@@ -14,7 +14,7 @@ app.use((req, res, next) => {
 // now we couldn't use middleware for authentication here as we used for maintainance mode, otherwise it will run with every request but we dont want it to run with 'create-user' and 'login'.
 // So, we'll pass widdleware to specific route-handler before which we want it to run.
 */
-
+ 
 
 app.use(express.json()); // it will automatically parse incoming json to an object
 // Use these routers:

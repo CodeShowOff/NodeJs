@@ -16,18 +16,19 @@ router.post('/users', async (req, res) => {
     }
 });
 
-
+// User login
 router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password); // <- custom
         const token = await user.generateAuthToken();
-        res.send({ user, token });
+        // res.send({ user: await user.getPublicProfile(), token });
+        res.send({ user: user, token });
     } catch (err) {
         res.status(400).send({ error: err.message });
     }
 })
 
-/* We are commenting out this route because we dont want anyone to access all users data, it was just for learning purpose i.e. to view all users.
+/* We dont want anyone to access all users data, it was just for learning purpose i.e. to view all users.
 // Read users
 router.get('/users', auth, async (req, res) => {
     try {
@@ -40,12 +41,39 @@ router.get('/users', auth, async (req, res) => {
 */
 
 
+// logout from this session
+router.post('/users/logout', auth, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token;
+        })
+        await req.user.save();
+        res.send()
+    } catch (err) {
+        res.status(500).send();
+    }
+});
+
+
+// logout from everywhere
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try {
+        req.user.tokens = [];
+        await req.user.save();
+        res.send();
+    } catch (err) {
+        res.status(500).send();
+    }
+});
+
+
 // Get your own profile:
 router.get('/users/me', auth, async (req, res) => {
     res.send(req.user); // we created this 'req.user' in our auth.js file
 });
 
 
+/* Not required
 // Find users by Id:
 router.get('/users/:id', auth, async (req, res) => {
     try {
@@ -60,8 +88,9 @@ router.get('/users/:id', auth, async (req, res) => {
         res.status(500).send({ error: 'server error' });
     }
 });
+*/
 
-
+/* We dont want to update a user using its user-id
 // Update users
 router.patch('/users/:id', auth, async (req, res) => {
     const updates = Object.keys(req.body);
@@ -94,8 +123,30 @@ router.patch('/users/:id', auth, async (req, res) => {
         res.status(400).send({ error: err.message });
     }
 });
+*/
 
 
+// Update users
+router.patch('/users/me', auth, async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ['name', 'age', 'password'];
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
+
+    if (!isValidOperation) return res.status(400).send({ error: 'Invalid updates!' });
+
+    try {
+        updates.forEach( (update) => req.user[update] = req.body[update]);
+        await req.user.save();        
+
+        res.send(req.user);
+    } catch (err) {
+        res.status(400).send({ error: err.message });
+    }
+});
+
+
+
+/* We dont want to delete a user using its user-id
 // Delete users
 router.delete('/users/:id', auth, async (req, res) => {
     const _id = req.params.id;
@@ -109,6 +160,19 @@ router.delete('/users/:id', auth, async (req, res) => {
         res.status(400).send({ error: err.message});
     }
 });
+*/
+
+// Delete users
+router.delete('/users/me', auth, async (req, res) => {
+    try {
+        await req.user.remove();
+        res.send(req.user);
+    } catch (err) {
+        res.status(400).send({ error: err.message});
+    }
+});
+
+
 
 
 export default router;

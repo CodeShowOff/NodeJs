@@ -21,6 +21,8 @@ const auth = async (req, res, next) => {
         // Store the authenticated user on the request object so that route handlers can easily access it without querying the database again.
         req.user = user;
 
+        req.token = token;
+
         // Proceed to the next middleware or route handler
         next();
     } catch (err) {
