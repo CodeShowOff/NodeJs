@@ -19,16 +19,16 @@ router.post('/tasks', auth, async (req, res) => {
     }
 });
 
-
+/*
 // View all created tasks by me
 router.get('/tasks', auth, async (req, res) => {
     // way-1:
-    // try {
-    //     const tasks = await Task.find({ owner: req.user._id });
-    //     res.send(tasks);
-    // } catch (err) {
-    //     res.status(500).send({ error: 'Server error' });
-    // }
+    try {
+        const tasks = await Task.find({ owner: req.user._id });
+        res.send(tasks);
+    } catch (err) {
+        res.status(500).send({ error: 'Server error' });
+    }
 
     // way-2:
     try {
@@ -38,6 +38,39 @@ router.get('/tasks', auth, async (req, res) => {
         res.status(500).send({ error: 'Server error!' });
     }
 });
+*/
+
+
+// View tasks (filtered)
+router.get('/tasks', auth, async (req, res) => {
+    const match = {};
+    const sort = {};
+
+    if(req.query.completed){
+        match.completed = req.query.completed === 'true' ? true : false;
+    }
+
+    if(req.query.sort){
+        const parts = req.query.sort.split(':');
+        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
+    }
+
+    try {
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit), // no of items to list
+                skip: parseInt(req.query.skip), // no of items to skip
+                sort
+            }
+        });
+        res.send(req.user.tasks);
+    } catch (err) {
+        res.status(500).send({ error: 'Server error!' });
+    }
+})
+
 
 
 // View task by Id created by me

@@ -1,5 +1,5 @@
-weather-app/backend/node_modules
-weather-app/frontend/node_modules
 desktop.ini
-**/node_modules/
+node_modules
 Ignored Folder
+.env
+.env.test

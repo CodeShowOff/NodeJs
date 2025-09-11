@@ -1,14 +1,22 @@
 import express from 'express';
+import multer from 'multer';
+import sharp from 'sharp';
 import User from '../models/user.js';
 import auth from '../middleware/auth.js';
+import sendMail from '../emails/accounts.js';
+
 
 const router = new express.Router();
+
 
 // Create user (sign-up)
 router.post('/users', async (req, res) => {
     try {
         const user = new User(req.body);
         const result = await user.save();
+
+        sendMail.sendWelcomeEmail(user.email, user.name);
+
         const token = await user.generateAuthToken();
         res.status(201).send({ result, token }); // 201 = Created
     } catch (err) {
@@ -135,8 +143,8 @@ router.patch('/users/me', auth, async (req, res) => {
     if (!isValidOperation) return res.status(400).send({ error: 'Invalid updates!' });
 
     try {
-        updates.forEach( (update) => req.user[update] = req.body[update]);
-        await req.user.save();        
+        updates.forEach((update) => req.user[update] = req.body[update]);
+        await req.user.save();
 
         res.send(req.user);
     } catch (err) {
@@ -162,15 +170,72 @@ router.delete('/users/:id', auth, async (req, res) => {
 });
 */
 
+
 // Delete users
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await User.findByIdAndDelete(req.user._id);
+        sendMail.sendCancelEmail(req.user.email, req.user.name);
         res.send(req.user);
     } catch (err) {
         res.status(400).send({ error: err.message });
     }
 });
 
+
+// Files Upload
+const upload = multer({
+    // dest: 'avatars/',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, callback) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return callback(new Error("Please upload an image!"));
+        }
+        callback(undefined, true); // accept file
+    }
+});
+
+// Set avatar
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    const buffer = await sharp(req.file.buffer)
+                        .resize({ width: 250, height: 250 })
+                        .png()
+                        .toBuffer();
+
+    req.user.avatar = buffer; // store image buffer with user data in database
+    await req.user.save();
+
+    res.send();
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+});
+
+
+// Delete avatar
+router.delete('/users/me/avatar', auth, async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save();
+
+    res.send();
+})
+
+
+// Get avatar
+router.get('/users/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if(!user || !user.avatar){
+            throw new Error('User or avatar not found!');
+        }
+
+        res.set('Content-Type', 'image/png')
+        res.send(user.avatar);
+    } catch (error) {
+        res.status(404).send({ error: error.message });
+    }
+})
 
 export default router;

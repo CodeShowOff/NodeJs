@@ -8,7 +8,7 @@ const auth = async (req, res, next) => {
         const token = req.header('Authorization').replace('Bearer ', '');
 
         // Verify token signature & decode payload (checks if it was signed with our secret)
-        const decoded = jwt.verify(token, 'tasks-app-user@CodeShowOff');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // Find user with matching ID AND make sure this exact token still exists in their tokens array
         // Why? So we can support logout/revoking tokens. If the token was removed from DB, it’s invalid.
