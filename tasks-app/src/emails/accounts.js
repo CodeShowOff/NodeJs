@@ -10,14 +10,7 @@ const sendWelcomeEmail = (email, name) => {
         text: `Welcome to the app, ${name}. Let us know how you get along with the app.`
         // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
     }
-    sgMail
-        .send(msg)
-        .then(() => {
-            console.log('Email sent')
-        })
-        .catch((error) => {
-            console.error(error)
-    });
+    sgMail.send(msg);
 }
 
 

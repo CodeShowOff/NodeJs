@@ -14,7 +14,7 @@ const add = (a, b) => {
     })
 }
 
-
+ 
 export default {
     calculateTip,
     fahrenheitToCelsius,

@@ -18,7 +18,7 @@ router.post('/users', async (req, res) => {
         sendMail.sendWelcomeEmail(user.email, user.name);
 
         const token = await user.generateAuthToken();
-        res.status(201).send({ result, token }); // 201 = Created
+        res.status(201).send({ user: result, token }); // 201 = Created
     } catch (err) {
         res.status(400).send({ error: err.message });
     }

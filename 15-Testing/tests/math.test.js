@@ -47,11 +47,11 @@ test('Async test demo with callback', (done) => {
 }) */
 
 
-test('Async test demo with Promise', () => {
-    return math.add(3, 4).then(sum => {
-        expect(sum).toBe(7);
-    });
-});
+// test('Async test demo with Promise', () => {
+//     return math.add(3, 4).then(sum => {
+//         expect(sum).toBe(7);
+//     });
+// });
 
 test('Async test demo with async/await', async () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -62,8 +62,3 @@ test('Async test demo with async/await', async () => {
     const sum = await math.add(3, 4);
     expect(sum).toBe(7);
 });
-
-test('Should add two numbers', async () => {
-    const sum = await math.add(3, 4);
-    expect(sum).toBe(7);
-})
