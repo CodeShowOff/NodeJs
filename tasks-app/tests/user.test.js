@@ -1,5 +1,4 @@
 import request from 'supertest';
-import mongoose from 'mongoose';
 import app from '../src/app.js';
 import User from '../src/models/user.js';
 import { userOneId, userOne, setupDatabase } from './fixtures/db.js';

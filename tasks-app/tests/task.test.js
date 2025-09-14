@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../src/app.js'; 
 import Task from '../src/models/task.js';
-import { userOneId, userOne, userTwoId, userTwo, setupDatabase, taskOne } from './fixtures/db.js';
+import { userOne, userTwo, setupDatabase, taskOne } from './fixtures/db.js';
 
 beforeEach(setupDatabase);        
 
