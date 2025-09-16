@@ -1,8 +1,9 @@
 import express from 'express';
 import http from 'http';
+import { Filter } from 'bad-words';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
-import { dirname, resolve, join } from 'path';
+import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,32 +13,39 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+
 // Serve static files
 app.use(express.static(publicDirPath));
 
-// Route to index.html
-app.get('/', (req, res) => {
-    res.sendFile(join(publicDirPath, 'index.html'));
-});
-
-
-let count = 0;
-
-// server (emit) -> client (receive) - countUpdated
-// client (emit) -> server (receive) - increment
 
 // Socket.IO
 io.on('connection', (socket) => {
     console.log('New WebSocket connection.');
 
-    socket.emit('countUpdated', count);
+    socket.emit('message', 'Welcome!');
+    socket.broadcast.emit('message', 'A new user has joined!');
 
-    socket.on('increment', () => {
-        count++;
-        // socket.emit('countUpdated', count);
-        io.emit('countUpdated', count);
+    socket.on('sendMessage', (message, callback) => {
+        const filter = new Filter();
+
+        if(filter.isProfane(message)){
+            return callback('Profanity is not allowed!');
+        }
+
+        io.emit('message', message);
+        callback();
+    })
+
+    socket.on('sendLocation', (coords, callback) => {
+        io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`);
+        callback();
+    })
+
+    socket.on('disconnect', () => {
+        io.emit('message', 'A user has left!');
     })
 });
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
